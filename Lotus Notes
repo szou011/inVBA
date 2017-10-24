@@ -38,3 +38,68 @@ Public Sub Get_Notes_Email_Text()
     Loop
 
 End Sub
+
+
+Public Sub Read_Notes_Calendar()
+
+Dim noSession
+Dim noDatabase
+Dim noView
+Dim noDocument
+Dim noNextDocument
+Dim Today
+Dim text
+Dim suffix
+Dim vaItem
+Dim vaAttachment
+Dim i As Long
+Dim inti As Integer
+Dim str_dates() As String
+Dim str_datest As String
+Dim E_date As Date
+Dim str_start As String
+Dim str_slut As String
+Dim lng_1 As Long
+Dim lng_2 As Long
+Dim x As Integer
+Dim y As Integer
+CurrentDb.Execute "DELETE * FROM tbl_MYTIME"
+Set noSession = CreateObject("Notes.NotesSession")
+Set noDatabase = noSession.GetDatabase("", "")
+Set noView = noDatabase.GetView("($Calendar)")
+Set noDocument = noView.GetFirstDocument
+
+Do Until noDocument Is Nothing
+    Set noNextDocument = noView.GetNextDocument(noDocument)
+    vaItem = noDocument.GetItemValue("CalendarDateTime")
+    x = LBound(vaItem)
+    y = UBound(vaItem)
+    Do Until x = y
+        E_date = CDate(Left(noDocument.GetItemValue("CalendarDateTime")(x), 10))
+        If E_date >= Date And E_date < Date + 15 Then
+            str_start = Left(Right(noDocument.GetItemValue("StartTime")(0), 8), 5)
+            str_slut = Left(Right(noDocument.GetItemValue("EndTime")(0), 8), 5)
+            If Len(str_start) > 0 And Len(str_slut) > 0 Then
+                If IsNull(DLookup("DATO", "tbl_MYTIME", "DATO=#" & sql_date(CStr(E_date)) & "# AND Subject=" & Chr(34) & Replace(noDocument.GetItemValue("Subject")(0), Chr(34), Chr(39)) & Chr(34))) And E_date >= Date And E_date < Date + 15 Then
+                    lng_1 = CDate(CLng(Left(str_slut, 2) * 60) + CLng(Right(str_slut, 2)))
+                    lng_2 = CDate(CLng(Left(str_start, 2) * 60) + CLng(Left(str_start, 2)))
+                    CurrentDb.Execute "INSERT INTO tbl_MYTIME(DATO,Used_time,Subject) VALUES(#" & sql_date(CStr(E_date)) & "#," & (lng_1 - lng_2) & "," & Chr(34) & Replace(noDocument.GetItemValue("Subject")(0), Chr(34), Chr(39)) & Chr(34) & ")"
+                End If
+            End If
+        End If
+    x = x + 1
+    Loop
+nextI:
+    Set noDocument = noNextDocument
+Loop
+Set noNextDocument = Nothing
+Set noDocument = Nothing
+Set noView = Nothing
+Set noDatabase = Nothing
+Set noSession = Nothing
+
+Exit Function
+err:
+Resume Next
+
+End Sub
