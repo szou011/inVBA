@@ -1,0 +1,40 @@
+Public Sub Get_Notes_Email_Text()
+
+    Dim NSession As Object      'NotesSession
+    Dim NMailDb As Object       'NotesDatabase
+    Dim NDocs As Object         'NotesDocumentCollection
+    Dim NDoc As Object          'NotesDocument
+    Dim NNextDoc As Object      'NotesDocument
+    Dim NItem As Object         'NotesItem
+    Dim view As String
+    Dim filterText As String
+    
+    view = "$All"       'Name of view or folder to retrieve documents from
+    filterText = ""     'Optional text string to filter the view
+    
+    Set NSession = CreateObject("Notes.NotesSession")
+    Set NMailDb = NSession.GETDATABASE("", "")  'Default server and database
+    If Not NMailDb.IsOpen Then
+        NMailDb.OPENMAIL
+    End If
+    
+    Set NDocs = NMailDb.GETVIEW(view)
+    NDocs.Clear
+        
+    'Apply optional filter
+        
+    If filterText <> "" Then
+        NDocs.FTSEARCH filterText, 0
+    End If
+      
+    Set NDoc = NDocs.GETFIRSTDOCUMENT
+    Do Until NDoc Is Nothing
+        Set NNextDoc = NDocs.GETNEXTDOCUMENT(NDoc)
+        Set NItem = NDoc.GETFIRSTITEM("Body")
+        If Not NItem Is Nothing Then
+            MsgBox prompt:=NItem.Text, Title:=NDoc.GETITEMVALUE("Subject")(0)
+        End If
+        Set NDoc = NNextDoc
+    Loop
+
+End Sub
