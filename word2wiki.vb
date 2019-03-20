@@ -292,8 +292,7 @@ Private Sub ConvertItalic()
         Do While .Execute
             With Selection
                 If InStr(1, .Text, vbCr) Then
-                    ' Just process the chunk before any newline
-characters
+                    ' Just process the chunk before any newline characters
                     ' We'll pick-up the rest with the next search
                     .Font.Italic = False
                     .Collapse
@@ -334,8 +333,7 @@ Private Sub ConvertUnderline()
         Do While .Execute
             With Selection
                 If InStr(1, .Text, vbCr) Then
-                    ' Just process the chunk before any newline
-characters
+                    ' Just process the chunk before any newline characters
                     ' We'll pick-up the rest with the next search
                     .Font.Underline = False
                     .Collapse
