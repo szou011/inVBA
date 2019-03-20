@@ -171,15 +171,13 @@ Private Sub ConvertH4()
         Do While .Execute
             With Selection
                 If InStr(1, .Text, vbCr) Then
-                    ' Just process the chunk before any newline
-characters
+                    ' Just process the chunk before any newline  characters
                     ' We'll pick-up the rest with the next search
                     .Collapse
                     .MoveEndUntil vbCr
                 End If
 
-                ' Don't bother to markup newline characters (prevents a
-loop, as well)
+                    ' Don't bother to markup newline characters (prevents a loop, as well)
                 If Not .Text = vbCr Then
                     .InsertBefore "!!!!"
                 End If
@@ -214,8 +212,7 @@ Private Sub ConvertH5()
         Do While .Execute
             With Selection
                 If InStr(1, .Text, vbCr) Then
-                    ' Just process the chunk before any newline
-characters
+                    ' Just process the chunk before any newline characters
                     ' We'll pick-up the rest with the next search
                     .Collapse
                     .MoveEndUntil vbCr
